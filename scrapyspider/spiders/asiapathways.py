@@ -2,6 +2,7 @@ import scrapy
 from scrapy import Request
 from scrapy.spiders import Spider
 from scrapyspider.items import ArticleItem
+from scrapyspider.translater import Translate
 
 class Asiapathways(Spider):
     name = 'asiapathways'
@@ -20,16 +21,22 @@ class Asiapathways(Spider):
 
     def detail_parse(self, response):
         title = response.xpath("//div[@id='main']/div[1]/h1/text()").extract()[0]
-        publish_time = response.xpath("//div[@id='main']/div[1]/div[1]/abbr/text()").extract()[0]
-        publisher = response.xpath("//div[@id='main']/div[1]/div[1]/span/span/a/text()").extract()
-        publisher = ','.join(publisher)
+        try:
+            publish_time = response.xpath("//div[@id='main']/div[1]/div[1]/abbr/text()").extract()[0]
+        except:
+            publish_time = ''
+        try:
+            publisher = response.xpath("//div[@id='main']/div[1]/div[1]/span/span/a/text()").extract()
+            publisher = ','.join(publisher)
+        except:
+            publisher = ''
         paragraph = response.xpath("//div[@id='main']/div[1]/div[2]/p/text()").extract()
         content = '\n'.join(paragraph)
 
         item = ArticleItem()
         item['site_name'] = self.name
-        item['title'] = title
+        item['title'] = Translate(title)
         item['publish_time'] = publish_time
         item['author'] = publisher
-        item['content'] = content
+        item['content'] = Translate(content)
         yield item

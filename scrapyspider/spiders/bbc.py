@@ -57,7 +57,7 @@ class BbcSpider(scrapy.Spider):
 
         item = ArticleItem()
         item['site_name'] = 'bbc'
-        item['title'] = title
+        item['title'] = Translate(title)
         item['content'] = Translate(content)
         try:
             item['author'] = response.xpath("//div[@data-component='byline-block']/div/div[1]/time/text()")

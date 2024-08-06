@@ -6,7 +6,7 @@ from datetime import datetime
 Base = declarative_base()
 
 class WebSiteArticle(Base):
-    __tablename__ = 'website_article'
+    __tablename__ = 'website_article_cn'
     __tabl_args__ = '网站信息详情2.0'
 
     id = Column(Integer, primary_key=True)

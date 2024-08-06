@@ -2,6 +2,7 @@ import scrapy
 from scrapy import Request
 from scrapy.spiders import Spider
 from scrapyspider.items import ArticleItem
+from scrapyspider.translater import Translate
 
 class Agriculture(Spider):
     name = 'agriculture'
@@ -24,17 +25,22 @@ class Agriculture(Spider):
             yield scrapy.Request(url=u, callback=self.detail_parse)
 
     def detail_parse(self, response):
-        url_n = response.url
         title = response.xpath("//div[@id='agriculture-article-header_1-0']/h1/text()").extract()[0]
-        publish_time = response.xpath("//div[@id='agriculture-article-header_1-0']/div[2]/div[1]/div/div[2]/text()").extract()[0]
-        publisher = response.xpath("//div[@id='agriculture-article-header_1-0']/div[2]/div[1]/div/div[1]/div/a/text()").extract()[0]
+        try:
+            publish_time = response.xpath("//div[@id='agriculture-article-header_1-0']/div[2]/div[1]/div/div[2]/text()").extract()[0]
+        except:
+            publish_time = ''
+        try:
+            publisher = response.xpath("//div[@id='agriculture-article-header_1-0']/div[2]/div[1]/div/div[1]/div/a/text()").extract()[0]
+        except:
+            publisher = ''
         content = response.xpath("//div[@id='mntl-sc-page_1-0']/p/text()").extract()
         content = '\n'.join(content)
 
         item = ArticleItem()
         item['site_name'] = self.name
-        item['title'] = title
+        item['title'] = Translate(title)
         item['publish_time'] = publish_time
         item['author'] = publisher
-        item['content'] = content
+        item['content'] = Translate(content)
         yield item

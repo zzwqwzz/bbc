@@ -25,8 +25,14 @@ class Agweb(Spider):
 
     def detail_parse(self, response):
         title = response.xpath("//article[@role='article']/h1/text()").extract()
-        publish_time = response.xpath("//article[@role='article']/div[2]/footer/div/div[1]/text()").extract()[2]
-        publisher = response.xpath("//article[@role='article']/div[2]/footer/div/div[1]/text()").extract()[1]
+        try:
+            publish_time = response.xpath("//article[@role='article']/div[2]/footer/div/div[1]/text()").extract()[2]
+        except:
+            publish_time = ''
+        try:
+            publisher = response.xpath("//article[@role='article']/div[2]/footer/div/div[1]/text()").extract()[1]
+        except:
+            publisher = ''
         content = response.xpath("//article[@role='article']/div[2]/div[2]/p/text()").extract()
         content = '\n'.join(content)
 
