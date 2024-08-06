@@ -10,10 +10,6 @@ class Agweb(Spider):
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36',
     }
 
-    def __init__(self, *args, **kwargs):
-        super(Agweb, self).__init__(*args, **kwargs)
-
-
     def start_requests(self):
         url = 'https://www.agweb.com/news?page='
         for page in range(1):
