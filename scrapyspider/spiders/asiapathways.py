@@ -19,9 +19,10 @@ class Asiapathways(Spider):
             yield scrapy.Request(url=u, callback=self.detail_parse)
 
     def detail_parse(self, response):
-        title = response.xpath("//div[@id='main']/div[1]/h1/text()").extract()
-        publish_time = response.xpath("//div[@id='main']/div[1]/div[1]/abbr/text()").extract()
+        title = response.xpath("//div[@id='main']/div[1]/h1/text()").extract()[0]
+        publish_time = response.xpath("//div[@id='main']/div[1]/div[1]/abbr/text()").extract()[0]
         publisher = response.xpath("//div[@id='main']/div[1]/div[1]/span/span/a/text()").extract()
+        publisher = ','.join(publisher)
         paragraph = response.xpath("//div[@id='main']/div[1]/div[2]/p/text()").extract()
         content = '\n'.join(paragraph)
 
