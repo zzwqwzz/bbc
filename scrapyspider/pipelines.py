@@ -45,6 +45,7 @@ class PgPipeLine:
             # else:
             #     request_id = 0
             article = WebSiteArticle(site_name = item['site_name'],
+                                     url = item['url'],
                                      title = item['title'],
                                      author = item['author'],
                                      content = item['content'],

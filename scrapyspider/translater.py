@@ -17,7 +17,7 @@ def Translate(input_text):
 
     response = requests.post(url, headers=headers, data=json.dumps(data))
     response_out = json.loads(response.text)
-    print(response_out)
+    print(response_out['data']['status'])
     temp = list(response_out['data']['outputs'].values())
 
     return temp[0]

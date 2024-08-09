@@ -2,7 +2,8 @@ import scrapy
 from scrapy import Request
 from scrapy.spiders import Spider
 from scrapyspider.items import ArticleItem
-from scrapyspider.translater import Translate
+from scrapyspider.de_weight import de_weight
+import copy
 
 class Asiapathways(Spider):
     name = 'asiapathways'
@@ -15,11 +16,14 @@ class Asiapathways(Spider):
         yield Request(url=url, callback=self.parse, headers=self.headers)
 
     def parse(self, response):
-        links = response.xpath("//div[@id='main']/div/a/@href").extract()
-        for u in links:
+        urls = set(response.xpath("//div[@id='main']/div/a/@href").extract())
+        tempurl = copy.deepcopy(urls)
+        urls = de_weight(urls, tempurl, self.name)
+        for u in urls:
             yield scrapy.Request(url=u, callback=self.detail_parse)
 
     def detail_parse(self, response):
+        url = response.url
         title = response.xpath("//div[@id='main']/div[1]/h1/text()").extract()[0]
         try:
             publish_time = response.xpath("//div[@id='main']/div[1]/div[1]/abbr/text()").extract()[0]
@@ -34,9 +38,10 @@ class Asiapathways(Spider):
         content = '\n'.join(paragraph)
 
         item = ArticleItem()
+        item['url'] = url
         item['site_name'] = self.name
-        item['title'] = Translate(title)
+        item['title'] = title
         item['publish_time'] = publish_time
         item['author'] = publisher
-        item['content'] = Translate(content)
+        item['content'] = content
         yield item

@@ -11,9 +11,8 @@ class Agweb(Spider):
     }
 
     def start_requests(self):
-        url = 'https://www.agweb.com/news?page='
-        for page in range(1):
-            yield Request(url=url + str(page), callback=self.parse, headers=self.headers)
+        url = 'https://www.agweb.com/news'
+        yield Request(url=url, callback=self.parse, headers=self.headers)
 
     def parse(self, response):
         links = response.xpath(
