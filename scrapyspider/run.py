@@ -5,6 +5,7 @@ data = time.strftime('%Y%m%d', time.localtime(time.time()))
 print('日期:{}'.format(data))
 names = ['agdaily', 'agriculture', 'agropages', 'agupdate', 'asiapathways', 'bbc']
 for name in names:
+    os.makedirs("D:\\desktop\\scrapyspider\\datas\\{}".format(name))
     print('开始爬取{}'.format(name))
     cmd = 'scrapy crawl {} -o D:\\desktop\\scrapyspider\\datas\\{}\\{}_{}.csv'.format(name, name, name, data)
     os.system(cmd)
