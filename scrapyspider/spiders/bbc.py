@@ -1,6 +1,9 @@
 import scrapy
+from scrapy import Request
+from newspaper import Article
+import time
 from scrapyspider.items import ArticleItem
-from scrapyspider.de_weight import de_weight
+from scrapyspider.utils import save, de_weight
 import copy
 import requests
 from fake_useragent import UserAgent
@@ -9,6 +12,7 @@ import re
 
 class BbcSpider(scrapy.Spider):
     name = 'bbc'
+    data = time.strftime('%Y%m%d', time.localtime(time.time()))
 
     def __init__(self, *args, **kwargs):
         super(BbcSpider, self).__init__(*args, **kwargs)
@@ -48,28 +52,32 @@ class BbcSpider(scrapy.Spider):
         urls = copy.deepcopy(temp)
         tempurl = copy.deepcopy(urls)
         urls = de_weight(urls, tempurl, self.name)
-        for k in urls:
-            yield scrapy.Request(url=k, callback=self.detail_parse)
+        for u in urls:
+            yield Request(url=u, callback=self.detail_parse)
 
     def detail_parse(self, response):
         url = response.url
-        # 标题
-        title = response.xpath("//div[@data-component='headline-block']/h1/text()").extract()[0]
-        # 正文
-        content_res = response.xpath("//div[@data-component='text-block']/p/text()").extract()
-        content = '\n'.join(content_res)
+        art = Article(url)
+        art.download()
+        art.parse()
+        title = art.title
+        publish_time = art.publish_date
+        author = ','.join(art.authors)
+        text = art.text.split('\n')
+        temptext = copy.deepcopy(text)
+        for e in temptext:
+            if e == '':
+                text.remove('')
+        content = '\n'.join(text)
+
+        save(self.name, self.data, art.html, title)
 
         item = ArticleItem()
         item['url'] = url
-        item['site_name'] = 'bbc'
+        item['site_name'] = self.name
         item['title'] = title
+        item['publish_time'] = publish_time
+        item['author'] = author
         item['content'] = content
-        try:
-            item['author'] = response.xpath("//div[@data-component='byline-block']/div/div[1]/time/text()")
-        except:
-            item['author'] = ''
-        try:
-            item['publish_time'] = response.xpath("//div[@data-component='byline-block']/div/div[1]/time/text()")
-        except:
-            item['publish_time'] = ''
+        time.sleep(1)
         yield item

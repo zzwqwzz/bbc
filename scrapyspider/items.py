@@ -17,4 +17,5 @@ class ArticleItem(scrapy.Item):
     title = scrapy.Field()
     author = scrapy.Field()
     content = scrapy.Field()
+    summarize = scrapy.Field()
     publish_time = scrapy.Field()

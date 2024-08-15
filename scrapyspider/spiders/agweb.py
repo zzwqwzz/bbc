@@ -1,7 +1,9 @@
 import scrapy
+from newspaper import Article
 from scrapy import Request
 from scrapy.spiders import Spider
 from scrapyspider.items import ArticleItem
+import copy
 
 class Agweb(Spider):
     name = 'agweb'
@@ -20,25 +22,30 @@ class Agweb(Spider):
         link = response.xpath("//div[@class='region region-content']/div[4]/div/div/div[2]/div[1]/div/@about").extract()
         urls = links.union(link)
         for u in urls:
-            yield scrapy.Request(url=self.site + u, callback=self.detail_parse)
+            art = Article(u)
+            art.download()
+            art.parse()
+            url = art.url
+            title = art.title
+            publish_time = art.publish_date
+            author = ','.join(art.authors)
+            text = art.text.split('\n')
+            temptext = copy.deepcopy(text)
+            for e in temptext:
+                if e == '':
+                    text.remove('')
+            content = '\n'.join(text)
+            print(url)
+            print(title)
+            print(publish_time)
+            print(author)
+            print(content)
 
-    def detail_parse(self, response):
-        title = response.xpath("//article[@role='article']/h1/text()").extract()
-        try:
-            publish_time = response.xpath("//article[@role='article']/div[2]/footer/div/div[1]/text()").extract()[2]
-        except:
-            publish_time = ''
-        try:
-            publisher = response.xpath("//article[@role='article']/div[2]/footer/div/div[1]/text()").extract()[1]
-        except:
-            publisher = ''
-        content = response.xpath("//article[@role='article']/div[2]/div[2]/p/text()").extract()
-        content = '\n'.join(content)
-
-        item = ArticleItem()
-        item['site_name'] = self.name
-        item['title'] = title
-        item['publish_time'] = publish_time
-        item['author'] = publisher
-        item['content'] = content
-        yield item
+            item = ArticleItem()
+            item['url'] = url
+            item['site_name'] = self.name
+            item['title'] = title
+            item['publish_time'] = publish_time
+            item['author'] = author
+            item['content'] = content
+            yield item

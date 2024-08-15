@@ -12,12 +12,12 @@ cel.conf.enable_utc = False
 cel.conf.beat_schedule = {
     'spider-add-everyday': {
         'task': 'scrapyspider.run.spider',
-        'schedule': crontab(minute="1", hour="0"),
+        'schedule': crontab(minute="*/10", hour="0"),
         'args': ()
     },
     'trans-add-everyday': {
         'task': 'scrapyspider.auto_trans.auto_trans',
-         'schedule': crontab(minute="5", hour="0"),
+         'schedule': crontab(minute="10", hour="1"),
         'args': ()
     }
 }

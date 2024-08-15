@@ -7,7 +7,7 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-CONN_STR = "postgresql://postgres:difyai123456@127.0.0.1:5432/test"
+CONN_STR = "postgresql://postgres:difyai123456@127.0.0.1:5432/agriculture"
 ITEM_PIPELINES = {
     'scrapyspider.pipelines.PgPipeLine': 300
 }

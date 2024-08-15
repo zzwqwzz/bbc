@@ -10,3 +10,11 @@ for name in names:
     os.system(cmd)
     print('{}爬取结束'.format(name))
 print('爬取结束')
+
+
+from scrapy import cmdline
+
+
+# name = 'agupdate'
+# cmd = 'scrapy crawl {0}'.format(name)
+# cmdline.execute(cmd.split())
